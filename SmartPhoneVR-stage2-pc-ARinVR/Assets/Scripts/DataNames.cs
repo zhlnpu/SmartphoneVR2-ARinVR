@@ -55,6 +55,8 @@ namespace ServerCommunication
         DT_ONSCREEN_INPUT_SELECT_OBJ,
         DT_PHONE_INPUT,
 
+        DT_ARINVR,
+
     }
 
 
@@ -316,6 +318,19 @@ namespace ServerCommunication
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     public class Data_Transform : C_CommandBase_Whom_Dataname
     {
         //add extra codes here
@@ -393,6 +408,107 @@ namespace ServerCommunication
 
         }
     }
+
+
+
+
+
+    public class Data_ARINVR : C_CommandBase_Whom_Dataname
+    {
+        //add extra codes here
+        //相机与码的相对位置
+        //所有物体相对于码的位置，7个物体
+        //共计8个位置旋转参数
+
+        public float[] pos = new float[56];
+
+        public override byte[] ToByteArray()
+        {
+            byte[] byte_base = base.ToByteArray();
+            byte[] byte_pos = Converter.ConvertToByte(pos);
+
+            byte[] ret = new byte[byte_base.Length + byte_pos.Length];
+
+            byte_base.CopyTo(ret, 0);
+            byte_pos.CopyTo(ret, byte_base.Length);
+
+            return ret;
+        }
+
+        public Data_ARINVR(byte[] data) : base(data)
+        {
+            pos = Converter.ConvertToFloatArray(data, base.length, pos.Length);
+
+        }
+
+        //       public Data_rotation(CLIENT_NAME __whom, DATA_NAME __dataName, DATA_TYPE __dataType) : base(__whom, __dataName, __dataType)
+        public Data_ARINVR(CLIENT_NAME __whom, DATA_NAME __dataName) : base(__whom, __dataName)
+        {
+
+        }
+
+        public void SetData(Transform cam, GameObject[] objs)
+        {
+
+            pos[0] = cam.position.x;
+            pos[1] = cam.position.y;
+            pos[2] = cam.position.z;
+            pos[3] = cam.rotation.x;
+            pos[4] = cam.rotation.y;
+            pos[5] = cam.rotation.z;
+            pos[6] = cam.rotation.w;
+
+            for (int i = 1; i <= objs.Length; i++)
+            {
+                pos[i * 7 + 0] = objs[i - 1].transform.position.x;
+                pos[i * 7 + 1] = objs[i - 1].transform.position.y;
+                pos[i * 7 + 2] = objs[i - 1].transform.position.z;
+                pos[i * 7 + 3] = objs[i - 1].transform.rotation.x;
+                pos[i * 7 + 4] = objs[i - 1].transform.rotation.y;
+                pos[i * 7 + 5] = objs[i - 1].transform.rotation.z;
+                pos[i * 7 + 6] = objs[i - 1].transform.rotation.w;
+            }
+        }
+
+
+
+        public void SetData(Vector3 start, Vector3 end, GameObject[] objs)
+        {
+
+            pos[0] = start.x;
+            pos[1] = start.y;
+            pos[2] = start.z;
+            pos[3] = end.x;
+            pos[4] = end.y;
+            pos[5] = end.z;
+
+            for (int i = 1; i <= objs.Length; i++)
+            {
+                pos[i * 7 + 0] = objs[i - 1].transform.position.x;
+                pos[i * 7 + 1] = objs[i - 1].transform.position.y;
+                pos[i * 7 + 2] = objs[i - 1].transform.position.z;
+                pos[i * 7 + 3] = objs[i - 1].transform.rotation.x;
+                pos[i * 7 + 4] = objs[i - 1].transform.rotation.y;
+                pos[i * 7 + 5] = objs[i - 1].transform.rotation.z;
+                pos[i * 7 + 6] = objs[i - 1].transform.rotation.w;
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

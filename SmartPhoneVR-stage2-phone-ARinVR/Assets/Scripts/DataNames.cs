@@ -55,6 +55,8 @@ namespace ServerCommunication
         DT_ONSCREEN_INPUT_SELECT_OBJ,
         DT_PHONE_INPUT,
 
+        DT_ARINVR,
+
     }
 
 
@@ -196,24 +198,10 @@ namespace ServerCommunication
 
     }
 
-
-
     public class Data_CharByte : C_CommandBase_Whom_Dataname
     {
         //add extra codes here
         public char[] value = new char[100];
-
-       public void SetValue(string str)
-        {
-            for (int i=0;i< str.Length;i++)
-            {
-                value[i] = str[i];
-
-            }
-            value[str.Length] = '\0';
-
-        }
-
         public override byte[] ToByteArray()
         {
             byte[] byte_base = base.ToByteArray();
@@ -239,8 +227,6 @@ namespace ServerCommunication
         }
 
     }
-
-
 
     public class Data_Position3f : C_CommandBase_Whom_Dataname
     {
@@ -284,15 +270,6 @@ namespace ServerCommunication
             value[2] = point.z;
 
         }
-
-        public void SetValue(float x, float y, float z)
-        {
-            value[0] = x;
-            value[1] = y;
-            value[2] = z;
-
-        }
-
     }
 
 
@@ -341,6 +318,19 @@ namespace ServerCommunication
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     public class Data_Transform : C_CommandBase_Whom_Dataname
     {
         //add extra codes here
@@ -381,8 +371,8 @@ namespace ServerCommunication
     {
         public bool joystickEnabled = false;
         public float[] joystickDirection = new float[2];
-        public float []  joystickMagnitude =  new float[1];
-        public bool gripEnabled=false;
+        public float[] joystickMagnitude = new float[1];
+        public bool gripEnabled = false;
 
         public override byte[] ToByteArray()
         {
@@ -392,7 +382,7 @@ namespace ServerCommunication
             byte[] byte_joystickMagnitude = Converter.ConvertToByte(joystickMagnitude);
             byte[] byte_gripEnabled = Converter.ConvertToByte(gripEnabled);
 
-            byte[] ret = new byte[byte_base.Length + byte_joystickEnabled.Length + byte_joystickDirection.Length+ byte_joystickMagnitude.Length+ byte_gripEnabled.Length];
+            byte[] ret = new byte[byte_base.Length + byte_joystickEnabled.Length + byte_joystickDirection.Length + byte_joystickMagnitude.Length + byte_gripEnabled.Length];
 
             byte_base.CopyTo(ret, 0);
             byte_joystickEnabled.CopyTo(ret, byte_base.Length);
@@ -407,8 +397,8 @@ namespace ServerCommunication
         {
             joystickEnabled = Converter.ConvertToBool(data, base.length);
             joystickDirection = Converter.ConvertToFloatArray(data, base.length + sizeof(bool), joystickDirection.Length);
-            joystickMagnitude = Converter.ConvertToFloatArray(data, base.length + sizeof(bool)+sizeof(float)*joystickDirection.Length, joystickMagnitude.Length);
-            gripEnabled = Converter.ConvertToBool(data, base.length + sizeof(bool) + sizeof(float) * joystickDirection.Length + sizeof(float)* joystickMagnitude.Length);
+            joystickMagnitude = Converter.ConvertToFloatArray(data, base.length + sizeof(bool) + sizeof(float) * joystickDirection.Length, joystickMagnitude.Length);
+            gripEnabled = Converter.ConvertToBool(data, base.length + sizeof(bool) + sizeof(float) * joystickDirection.Length + sizeof(float) * joystickMagnitude.Length);
 
         }
 
@@ -423,9 +413,130 @@ namespace ServerCommunication
 
 
 
+    public class Data_ARINVR : C_CommandBase_Whom_Dataname
+    {
+        //add extra codes here
+        //相机与码的相对位置
+        //所有物体相对于码的位置，7个物体
+        //共计8个位置旋转参数
+
+        public float[] pos = new float[56];
+
+        public override byte[] ToByteArray()
+        {
+            byte[] byte_base = base.ToByteArray();
+            byte[] byte_pos = Converter.ConvertToByte(pos);
+
+            byte[] ret = new byte[byte_base.Length + byte_pos.Length];
+
+            byte_base.CopyTo(ret, 0);
+            byte_pos.CopyTo(ret, byte_base.Length);
+
+            return ret;
+        }
+
+        public Data_ARINVR(byte[] data) : base(data)
+        {
+            pos = Converter.ConvertToFloatArray(data, base.length, pos.Length);
+
+        }
+
+        //       public Data_rotation(CLIENT_NAME __whom, DATA_NAME __dataName, DATA_TYPE __dataType) : base(__whom, __dataName, __dataType)
+        public Data_ARINVR(CLIENT_NAME __whom, DATA_NAME __dataName) : base(__whom, __dataName)
+        {
+
+        }
+
+     public   void SetData(Transform cam, GameObject [] objs)
+        {
+
+            pos[0] = cam.position.x;
+            pos[1] = cam.position.y;
+            pos[2] = cam.position.z;
+            pos[3] = cam.rotation.x;
+            pos[4] = cam.rotation.y;
+            pos[5] = cam.rotation.z;
+            pos[6] = cam.rotation.w;
+
+            for (int i = 1; i <= objs.Length; i++)
+            {
+                pos[i * 7 + 0] = objs[i-1].transform.position.x;
+                pos[i * 7 + 1] = objs[i-1].transform.position.y;
+                pos[i * 7 + 2] = objs[i-1].transform.position.z;
+                pos[i * 7 + 3] = objs[i-1].transform.rotation.x;
+                pos[i * 7 + 4] = objs[i-1].transform.rotation.y;
+                pos[i * 7 + 5] = objs[i-1].transform.rotation.z;
+                pos[i * 7 + 6] = objs[i-1].transform.rotation.w;
+            }
+        }
+
+
+
+        public void SetData(Vector3 start, Vector3 end, GameObject[] objs)
+        {
+
+            pos[0] = start.x;
+            pos[1] = start.y;
+            pos[2] = start.z;
+            pos[3] = end.x;
+            pos[4] = end.y;
+            pos[5] = end.z;
+
+            for (int i = 1; i <= objs.Length; i++)
+            {
+                pos[i * 7 + 0] = objs[i - 1].transform.position.x;
+                pos[i * 7 + 1] = objs[i - 1].transform.position.y;
+                pos[i * 7 + 2] = objs[i - 1].transform.position.z;
+                pos[i * 7 + 3] = objs[i - 1].transform.rotation.x;
+                pos[i * 7 + 4] = objs[i - 1].transform.rotation.y;
+                pos[i * 7 + 5] = objs[i - 1].transform.rotation.z;
+                pos[i * 7 + 6] = objs[i - 1].transform.rotation.w;
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public class Converter
     {
+        public static byte[] ConvertToByte(char[] data)
+        {
+
+            byte[] ret = new byte[data.Length * sizeof(char)];
+            for (int i = 0; i < data.Length; i++)
+            {
+                (BitConverter.GetBytes((char)data[i])).CopyTo(ret, i * sizeof(char));
+            }
+            return ret;
+        }
+
+        public static char[] ConvertTocharArray(byte[] data, int index, int length)
+        {
+            char[] result = new char[length];
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = BitConverter.ToChar(data, index + i * sizeof(char));
+            }
+            return result;
+        }
 
         public static byte[] ConvertToByte(bool data)
         {
@@ -443,10 +554,10 @@ namespace ServerCommunication
 
         public static byte[] ConvertToByte(int data)
         {
-            byte[] ret = new byte[ sizeof(Int32)];
-          
-              (  BitConverter.GetBytes((int)data)).CopyTo(ret, 0);
-            
+            byte[] ret = new byte[sizeof(Int32)];
+
+            (BitConverter.GetBytes((int)data)).CopyTo(ret, 0);
+
             return ret;
         }
 
@@ -467,31 +578,6 @@ namespace ServerCommunication
             }
             return ret;
         }
-
-
-        public static byte[] ConvertToByte(char[] data)
-        {
-
-            byte[] ret = new byte[data.Length * sizeof(char)];
-            for (int i = 0; i < data.Length; i++)
-            {
-                (BitConverter.GetBytes((char)data[i])).CopyTo(ret, i * sizeof(char));
-            }
-
-
-            return ret;
-        }
-
-        public static char[] ConvertTocharArray(byte[] data, int index, int length)
-        {
-            char[] result = new char[length];
-            for (int i = 0; i < length; i++)
-            {
-                result[i] = BitConverter.ToChar(data, index + i * sizeof(char));
-            }
-            return result;
-        }
-
         public static float[] ConvertToFloatArray(byte[] data, int index, int length)
         {
             float[] result = new float[length];

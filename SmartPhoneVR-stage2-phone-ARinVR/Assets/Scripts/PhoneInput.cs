@@ -26,7 +26,7 @@ public class PhoneInput : MonoBehaviour
 
 
         //  phoneInput.value = arg0.ToCharArray();
-        phoneInput.SetValue(arg0);
+      //  phoneInput.SetValue(arg0);
 
         BackgroundCommunication.instance.SendToServer(phoneInput.ToByteArray());
 

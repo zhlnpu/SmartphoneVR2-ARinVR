@@ -47,10 +47,13 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/StableDrawingAndroid.unity
     guid: 6b4a38578f884134697f1c20223d0c4f
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Scene_ISMAR_AV.unity
     guid: b682f8a806081144ab14b81fcc6210ac
   - enabled: 0
     path: Assets/Scenes/Scene_PhoneInput.unity
     guid: e60b94074aef3994bb41eb2175ad60b7
+  - enabled: 1
+    path: Assets/ARinVR.unity
+    guid: 178fb9fe5847afa4486a0d90601407f6
   m_configObjects: {}
