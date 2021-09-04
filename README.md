@@ -13,9 +13,72 @@
 
 
 
+## Configuration
+
+| What |  Description |
+|--|--|
+|Platform| Win 10|
+| Unity| 2019.3.1f1|
+|Headset| Quest 2|
+| Camera |SR300
+|Android SDK | >API 28
+|Gradle| [6.5 ](https\://services.gradle.org/distributions/gradle-6.5-all.zip) |
+|NDK| 21|
+| JDK| jdk1.8.0_271, or so|
+|librealsense| [2.44](https://github.com/IntelRealSense/librealsense/tree/v2.44.0)|
+| Oculus Integration |  V28
+|Phone| Huawei Mate 20|
 
 
 
+## Configuration
+
+| What |  Description |
+|--|--|
+|Platform| Win 10|
+| Unity| 2019.3.1f1|
+|Headset| Quest 2|
+| Camera |SR300
+|Android SDK | >API 28
+|Gradle| [6.5 ](https\://services.gradle.org/distributions/gradle-6.5-all.zip) |
+|NDK| 21|
+| JDK| jdk1.8.0_271, or so|
+|librealsense| [2.44](https://github.com/IntelRealSense/librealsense/tree/v2.44.0)|
+| Oculus Integration |  V28
+|Phone| Huawei Mate 20|
+
+
+
+
+# Issues
+
+### HMD detection incorrect
+in "OVRControllerHelper.cv"
+'''
+void Start()
+	{
+		OVRPlugin.SystemHeadset headset = OVRPlugin.GetSystemHeadsetType();
+
+		switch (headset)
+		{
+			case OVRPlugin.SystemHeadset.Rift_CV1:
+				activeControllerType = ControllerType.Rift;
+				break;
+			case OVRPlugin.SystemHeadset.Oculus_Quest_2:
+
+				activeControllerType = ControllerType.Quest2;
+				break;
+
+			case OVRPlugin.SystemHeadset.Oculus_Link_Quest_2:
+
+				activeControllerType = ControllerType.Quest2;
+				break;
+			default:
+				activeControllerType = ControllerType.QuestAndRiftS;
+				break;
+		}
+
+'''
 
 
 
