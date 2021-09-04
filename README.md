@@ -13,23 +13,6 @@
 
 
 
-## Configuration
-
-| What |  Description |
-|--|--|
-|Platform| Win 10|
-| Unity| 2019.3.1f1|
-|Headset| Quest 2|
-| Camera |SR300
-|Android SDK | >API 28
-|Gradle| [6.5 ](https\://services.gradle.org/distributions/gradle-6.5-all.zip) |
-|NDK| 21|
-| JDK| jdk1.8.0_271, or so|
-|librealsense| [2.44](https://github.com/IntelRealSense/librealsense/tree/v2.44.0)|
-| Oculus Integration |  V28
-|Phone| Huawei Mate 20|
-
-
 
 ## Configuration
 
@@ -46,6 +29,37 @@
 |librealsense| [2.44](https://github.com/IntelRealSense/librealsense/tree/v2.44.0)|
 | Oculus Integration |  V28
 |Phone| Huawei Mate 20|
+
+![Representative2-01 - Copy](https://user-images.githubusercontent.com/55628470/119116797-2fb34480-ba5b-11eb-9f0e-fc3ca779bbbb.jpg)
+
+
+## Settings on screen casting
+1. Phone
+Connect to the same local network as the PC, and get the IP address.
+
+2. Scrcpy
+Set the screen to landscape to allow a larger resolution rendered on the screen.
+```
+.\adb.exe devices
+.\adb.exe tcpip 5554
+.\adb.exe connect 192.168.3.125:5554
+.\adb.exe devices
+.\scrcpy.exe -s 192.168.3.125:5554  --lock-video-orientation 1 -b 80M  --window-title "AndroidPhoneScreen" --window-width 1920
+```
+3. OBS
+- Install obs [virtual camera](https://obsproject.com/forum/resources/obs-virtualcam.539/)
+- Set input and output resolution (stop virtual camera first)
+![image](https://user-images.githubusercontent.com/55628470/119802164-e8243100-bf10-11eb-9d20-4ec26f6e6971.png)
+
+The result should look like:
+![image](https://user-images.githubusercontent.com/55628470/119802332-0c800d80-bf11-11eb-8f3c-827ae4d9ea9a.png)
+
+- Then rotate the window in OBS:
+![image](https://user-images.githubusercontent.com/55628470/119802447-1e61b080-bf11-11eb-8548-5777c38ebb35.png)
+
+4. Unity 3D
+Selece "OBS virtual camera"
+
 
 
 
